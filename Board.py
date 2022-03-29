@@ -6,7 +6,7 @@ import constants
 import numpy as np
 
 class Board:
-
+    
     def init(self):
 
         self.screen = pygame.display.set_mode((constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT))
@@ -40,7 +40,7 @@ class Board:
             for j in range(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE):
                 self.cells[i][j] = Cell.Cell(i * constants.CELL_SIZE, j * constants.CELL_SIZE, 
                                             constants.CELL_SIZE)
-                self.cells[i][j].draw(self.screen, constants.SLATE)
+                self.cells[i][j].draw(self.screen, constants.GROUND_COLOR)
         self.draw_grid()
         
     # This method draws the grid over top of the cells
@@ -50,13 +50,14 @@ class Board:
         for y in range(0, constants.WINDOW_HEIGHT, constants.CELL_SIZE):
             pygame.draw.line(self.screen, constants.BLACK, (0, y), (constants.WINDOW_WIDTH, y))
 
-
+    # Randomly places lava cells
     def randomize_lava(self):
         for i in range(constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE,
                         (constants.WINDOW_WIDTH - constants.SAFE_ZONE_WIDTH) // constants.CELL_SIZE):
             for j in range(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE):
                 if random.randint(0, 100) < constants.LAVA_CHANCE:
                     self.cells[i][j].terrain = "lava"
+                    self.cells[i][j].color = constants.LAVA_COLOR
                     self.cells[i][j].draw(self.screen, constants.LAVA_COLOR)
                     self.draw_grid()
         
@@ -72,7 +73,7 @@ class Board:
         self.cells[exit_cell_x][exit_cell_y].draw(self.screen, constants.EXIT_COLOR)
         self.draw_grid()
         
-
+    # Creates a bridge between the left most safe zone and the right most safe zone
     def build_bridge(self):
         bridge_y = random.randint(0, constants.WINDOW_HEIGHT / constants.CELL_SIZE)
 
@@ -82,8 +83,8 @@ class Board:
             for j in range(constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE, 
                         ((constants.WINDOW_WIDTH - constants.SAFE_ZONE_WIDTH) // constants.CELL_SIZE)):
                 self.cells[j][i].terrain = "wood"
-                self.cells[j][i].draw(self.screen, constants.BRIDGE_COLOR)
+                self.cells[j][i].color = constants.WOOD_COLOR
+                self.cells[j][i].draw(self.screen, constants.WOOD_COLOR)
             self.draw_grid()
 
-        
         self.draw_grid()
