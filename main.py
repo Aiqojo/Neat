@@ -10,21 +10,20 @@ def main():
 
 
     board = Board.Board()
-    board.init()
     board.randomize_lava()
     board.draw_grid()
     board.create_exit()
     board.build_bridge()
-    agent_test = Agent.Agent()
+    
+    for i in range(10):
+        agent = Agent.Agent()
+        board.add_agent(agent)
+    
 
     # Randomly move agent around
     for i in range(500):
-        agent_test.find_path(board)
-        agent_test.draw(board)
-        board.draw_grid()
+        board.randomly_move_agents()        
         pygame.display.flip()
-        agent_test.reached_exit(board)
-        print(agent_test.x, agent_test.y)
         time.sleep(.1)
 
 
@@ -35,3 +34,7 @@ def main():
 if __name__ == '__main__':
     main()
 
+
+# logic for when agent moves onto cell
+# make agents bump into each other
+# give them a chance to push other agent and take its place

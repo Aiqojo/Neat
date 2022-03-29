@@ -7,8 +7,11 @@ import numpy as np
 
 class Board:
     
-    def init(self):
+    agent_list = []
 
+    def __init__(self):
+
+        # Initialize the pygame screen
         self.screen = pygame.display.set_mode((constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT))
         constants.CELL_SIZE = constants.CELL_SIZE
         self.cell_count = constants.WINDOW_WIDTH // constants.CELL_SIZE * constants.WINDOW_HEIGHT // constants.CELL_SIZE
@@ -87,4 +90,14 @@ class Board:
                 self.cells[j][i].draw(self.screen, constants.WOOD_COLOR)
             self.draw_grid()
 
+        self.draw_grid()
+
+    def add_agent(self, agent):
+        self.agent_list.append(agent)
+
+    # This method randomly moves all the agents
+    def randomly_move_agents(self):
+        for agent in self.agent_list:
+            agent.move(random.randint(-1, 1), random.randint(-1, 1))
+            agent.draw(self)
         self.draw_grid()

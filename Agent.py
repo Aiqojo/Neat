@@ -18,7 +18,8 @@ class Agent:
         self.alive = True
         
         self.image = pygame.Surface((constants.CELL_SIZE, constants.CELL_SIZE))
-        self.image.fill(constants.AGENT_COLOR)
+        random_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        self.image.fill(random_color)
 
     # Draws a cell to fill the agent's previous position and draws the agent's current position
     def draw(self, board):
