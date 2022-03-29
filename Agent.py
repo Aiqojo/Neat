@@ -6,9 +6,10 @@ import time
 
 class Agent:
 
-    def __init__(self, board):
+    def __init__(self, board, id):
 
         self.board = board
+        self.id = id
 
         #pygame.sprite.Sprite.__init__(self)
         self.initialize_agent_image()
@@ -20,7 +21,10 @@ class Agent:
         self.alive = True
         self.score = 0
 
-        self.set_stats()
+        # STATISTICS
+        self.health = 100
+        self.strength = random.randint(1, 20)
+        
 
     def initialize_agent_image(self):
         pygame.sprite.Sprite.__init__(self)
@@ -52,6 +56,7 @@ class Agent:
     # Moves the agent in the given direction and keeps in bounds
 
     def move(self, x, y):
+        score += 10
         self.board.cells[self.x // constants.CELL_SIZE][self.y //
                                                         constants.CELL_SIZE].agent.remove(self)
 
@@ -109,6 +114,7 @@ class Agent:
     def terrain_check(self, cell):
         if cell.get_terrain() == "lava":
             self.change_health(-20)
+            score -= 50
             #print("DAMAGE TAKEN AT:", self.x // constants.CELL_SIZE, self.y // constants.CELL_SIZE)
             #print("HEALTH: ", self.health)
             if self.health <= 0:
@@ -133,10 +139,10 @@ class Agent:
         prev_cell.draw(self.board.screen, prev_cell.color)
 
         self.alive = False
-        self.score = -100
+        self.score = -1000
 
         # Removes from board list
-        self.board.agent_list.remove(self)
+        self.board.alive_agents -= 1
 
     # Checks if the agent has reached the exit
     def reached_exit(self, board):

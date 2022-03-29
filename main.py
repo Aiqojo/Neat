@@ -1,39 +1,49 @@
-import Board
-import pygame
-import time
-import constants
-import Agent
-import random
+import Board, pygame, time, constants, Agent, random, os, neat
 
 
-def main():
-
+def main(genomes, config):
     pygame.init()
 
-    board = Board.Board()
+    nets = []
+    ge = []
 
+    # Create the board and agents
+    board = Board.Board()
     for i in range(20):
-        agent = Agent.Agent(board)
+        agent = Agent.Agent(board, i)
         board.add_agent(agent)
 
-    # Randomly move agent around
-    while board.agent_list:
-        pygame.display.flip()
-        #time.sleep(.05)
-        board.randomly_move_agents()
-        pygame.display.flip()
-        #time.sleep(.1)
+    for g in genomes:
+        net = neat.nn.FeedForwardNetwork(g, config)
+        nets.append(net)
+        g.fitness = 0
+        ge.append(g)
 
-    agents_left = 0
-    for i in range(constants.WINDOW_WIDTH // constants.CELL_SIZE):
-        for j in range(constants.WINDOW_HEIGHT // constants.CELL_SIZE):
-            if board.cells[i][j].agent:
-                agents_left += len(board.cells[i][j].agent)
+    generations = 100
 
-    print("AGENTS LEFT: " + str(agents_left))
+    for i in range(generations):
+        while board.agent_count > 0:
+            for x, agent in enumerate(board.agent_list):
+                
+
+
+    
 
     board.run()
 
+def run(config_path):
+    config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
+                         neat.DefaultSpeciesSet, neat.DefaultStagnation,
+                         config_path)
+    
+    p = neat.Population(config)
+    p.add_reporter(neat.StdOutReporter(True))
+    stats = neat.StatisticsReporter()
+    p.add_reporter(stats)
+
+    winner = p.run(main, 50)
 
 if __name__ == '__main__':
-    main()
+    local_dir = os.path.dirname(__file__)
+    config_path = os.path.join(local_dir, 'config.ini')
+    run(config_path)

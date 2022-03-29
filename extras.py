@@ -16,3 +16,11 @@
 
     #         self.x = self.previous_x
     #         self.y = self.previous_y
+
+    # # Randomly move agent around
+    # while board.agent_count > 0:
+    #     pygame.display.flip()
+    #     #time.sleep(.05)
+    #     board.randomly_move_agents()
+    #     pygame.display.flip()
+    #     #time.sleep(.1)

@@ -10,6 +10,7 @@ import time
 class Board:
 
     agent_list = []
+    alive_agents = 0
 
     def __init__(self):
 
@@ -120,6 +121,7 @@ class Board:
 
     def add_agent(self, agent):
         self.agent_list.append(agent)
+        self.alive_agents += 1
 
         cell = random.choice(self.empty_spawn_cells)
 
