@@ -4,28 +4,23 @@ import sys
 import Cell
 import constants
 import numpy as np
+import time
 
 class Board:
     
     agent_list = []
 
-    def Board(self):
-        empty_spawn_cells = []
-        for x in range(0, constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE):
-            for y in range(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE):
-                if len(self.cells[x][y].agent) == 0:
-                    empty_spawn_cells.append(self.cells[x][y])
-
     def __init__(self):
 
-        # Initialize the pygame screen
-        self.screen = pygame.display.set_mode((constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT))
-        constants.CELL_SIZE = constants.CELL_SIZE
-        self.cell_count = constants.WINDOW_WIDTH // constants.CELL_SIZE * constants.WINDOW_HEIGHT // constants.CELL_SIZE
         # Create 2d array
         self.cells = np.empty((constants.WINDOW_WIDTH // constants.CELL_SIZE, 
                                 constants.WINDOW_HEIGHT // constants.CELL_SIZE), dtype=Cell.Cell)
+
+        # Create pygame window
+        self.screen = pygame.display.set_mode((constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT))
         self.create_window()
+
+        self.cell_count = constants.WINDOW_WIDTH // constants.CELL_SIZE * constants.WINDOW_HEIGHT // constants.CELL_SIZE
 
 
     # To run the game
@@ -60,6 +55,14 @@ class Board:
             pygame.draw.line(self.screen, constants.BLACK, (x, 0), (x, constants.WINDOW_HEIGHT))
         for y in range(0, constants.WINDOW_HEIGHT, constants.CELL_SIZE):
             pygame.draw.line(self.screen, constants.BLACK, (0, y), (constants.WINDOW_WIDTH, y))
+
+    def get_empty_spawn_cells(self):
+        arr = []
+        for x in range(0, constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE):
+            for y in range(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE):
+                if len(self.cells[x][y].agent) == 0:
+                    arr.append(self.cells[x][y])
+        self.empty_spawn_cells = arr
 
     # Randomly places lava cells
     def randomize_lava(self):
@@ -103,9 +106,20 @@ class Board:
     def add_agent(self, agent):
         self.agent_list.append(agent)
 
+        cell = random.choice(self.empty_spawn_cells)
+        
+        agent.x = cell.x
+        agent.y = cell.y
+        cell.agent.append(agent)
+        self.empty_spawn_cells.remove(cell)
+        agent.draw(self)
+    
+
     # This method randomly moves all the agents
     def randomly_move_agents(self):
         for agent in self.agent_list:
-            agent.move(random.randint(-1, 1), random.randint(-1, 1))
-            agent.draw(self)
+            if agent.alive:
+                agent.move(random.randint(-1, 1), random.randint(-1, 1))
+                agent.draw(self)
+                # time.sleep(.25)
         self.draw_grid()
