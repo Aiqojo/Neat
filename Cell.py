@@ -2,6 +2,7 @@ import pygame
 import constants
 import random
 
+
 class Cell:
 
     def __init__(self, x, y, size):
@@ -14,7 +15,6 @@ class Cell:
         self.agent = []
         self.item = []
 
-
     def draw(self, screen, color):
         pygame.draw.rect(screen, color, (self.x, self.y, self.size, self.size))
 
@@ -26,12 +26,12 @@ class Cell:
 
     def get_color(self):
         return self.color
-    
+
     def set_color(self, color):
         self.color = color
 
     def get_agent(self):
         return self.agent
-    
+
     def add_agent(self, agent):
         self.agent.append(agent)

@@ -5,40 +5,35 @@ import constants
 import Agent
 import random
 
+
 def main():
 
     pygame.init()
 
     board = Board.Board()
-    board.create_window()
-    board.get_empty_spawn_cells()
-    board.randomize_lava()
-    board.draw_grid()
-    board.create_exit()
-    board.build_bridge()
 
-    arr = []
-    
     for i in range(20):
         agent = Agent.Agent(board)
         board.add_agent(agent)
-        arr.append((agent.x, agent.y))
 
     # Randomly move agent around
-    for i in range(500):
+    while board.agent_list:
         pygame.display.flip()
-        time.sleep(.1)
-        board.randomly_move_agents()        
+        #time.sleep(.05)
+        board.randomly_move_agents()
         pygame.display.flip()
         #time.sleep(.1)
 
+    agents_left = 0
+    for i in range(constants.WINDOW_WIDTH // constants.CELL_SIZE):
+        for j in range(constants.WINDOW_HEIGHT // constants.CELL_SIZE):
+            if board.cells[i][j].agent:
+                agents_left += len(board.cells[i][j].agent)
+
+    print("AGENTS LEFT: " + str(agents_left))
+
     board.run()
-    
+
 
 if __name__ == '__main__':
     main()
-
-# logic for when agent moves onto cell
-# make agents bump into each other
-# give them a chance to push other agent and take its place
-# if it's a lava cell, kill the agent
