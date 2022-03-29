@@ -1,3 +1,4 @@
+from ast import Constant
 import pygame
 import constants
 import random
@@ -5,17 +6,22 @@ import time
 
 class Agent:
 
-    def __init__(self):
+    def __init__(self, board):
+
+        self.board = board
 
         pygame.sprite.Sprite.__init__(self)
         
-        self.x = random.randint(0, constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE) * constants.CELL_SIZE - constants.CELL_SIZE * 2
-        self.y = random.randint(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE)  * constants.CELL_SIZE - constants.CELL_SIZE
-        self.previous_x = 0
-        self.previous_y = 0
-        
-        self.score = 0
+        # Initialize the agent's position
+        cell = random.choice(board.empty_spawn_cells)
+        self.x = cell.x
+        self.y = cell.y
+        self.previous_x = self.x
+        self.previous_y = self.y
         self.alive = True
+        self.score = 0
+        cell.add_agent(self)
+        board.empty_cells.remove(cell)
         
         self.image = pygame.Surface((constants.CELL_SIZE, constants.CELL_SIZE))
         random_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
@@ -50,6 +56,8 @@ class Agent:
             self.y = constants.WINDOW_HEIGHT - constants.CELL_SIZE
         else:
             self.y += y
+
+        self.board.cells[self.x // constants.CELL_SIZE, self.y // constants.CELL_SIZE].add_agent(self)
 
     # Checks if the agent has reached the exit
     def reached_exit(self, board):

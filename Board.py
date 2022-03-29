@@ -9,6 +9,13 @@ class Board:
     
     agent_list = []
 
+    def Board(self):
+        empty_spawn_cells = []
+        for x in range(0, constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE):
+            for y in range(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE):
+                if len(self.cells[x][y].agent) == 0:
+                    empty_spawn_cells.append(self.cells[x][y])
+
     def __init__(self):
 
         # Initialize the pygame screen
@@ -19,6 +26,7 @@ class Board:
         self.cells = np.empty((constants.WINDOW_WIDTH // constants.CELL_SIZE, 
                                 constants.WINDOW_HEIGHT // constants.CELL_SIZE), dtype=Cell.Cell)
         self.create_window()
+
 
     # To run the game
     def run(self):
@@ -36,7 +44,7 @@ class Board:
     # This method creates a pygame window with a grey background
     def create_window(self):
         pygame.init()
-        pygame.display.set_caption("Neat")
+        pygame.display.set_caption("NeatDungeon")
 
         # This loop creates a cell object and adds it to the board
         for i in range(0, constants.WINDOW_WIDTH // constants.CELL_SIZE):

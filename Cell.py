@@ -11,6 +11,10 @@ class Cell:
         self.terrain = "rock"
         self.color = constants.GROUND_COLOR
 
+        self.agent = []
+        self.item = []
+
+
     def draw(self, screen, color):
         pygame.draw.rect(screen, color, (self.x, self.y, self.size, self.size))
 
@@ -25,3 +29,9 @@ class Cell:
     
     def set_color(self, color):
         self.color = color
+
+    def get_agent(self):
+        return self.agent
+    
+    def add_agent(self, agent):
+        self.agent.append(agent)
