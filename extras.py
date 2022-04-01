@@ -24,3 +24,28 @@
     #     board.randomly_move_agents()
     #     pygame.display.flip()
     #     #time.sleep(.1)
+
+    # # Move up
+    #             if output[0] > 0.5:
+    #                 agent.move(0, 1)
+    #             # Move down
+    #             if output[1] > 0.5:
+    #                 agent.move(0, -1)
+    #             # Move left
+    #             if output[2] > 0.5:
+    #                 agent.move(-1, 0)
+    #             # Move right
+    #             if output[3] > 0.5:
+    #                 agent.move(1, 0)
+    #             # Move up-left
+    #             if output[4] > 0.5:
+    #                 agent.move(-1, 1)
+    #             # Move up-right
+    #             if output[5] > 0.5:
+    #                 agent.move(1, 1)
+    #             # Move down-left
+    #             if output[6] > 0.5:
+    #                 agent.move(-1, -1)
+    #             # Move down-right
+    #             if output[7] > 0.5:
+    #                 agent.move(1, -1)

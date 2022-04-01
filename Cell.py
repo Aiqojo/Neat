@@ -15,8 +15,8 @@ class Cell:
         self.agent = []
         self.item = []
 
-    def draw(self, screen, color):
-        pygame.draw.rect(screen, color, (self.x, self.y, self.size, self.size))
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.size, self.size))
 
     def get_terrain(self):
         return self.terrain

@@ -57,7 +57,7 @@ class Board:
             for j in range(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE):
                 self.cells[i][j] = Cell.Cell(i * constants.CELL_SIZE, j * constants.CELL_SIZE,
                                              constants.CELL_SIZE)
-                self.cells[i][j].draw(self.screen, constants.GROUND_COLOR)
+                self.cells[i][j].draw(self.screen)
         self.draw_grid()
 
     # This method draws the grid over top of the cells
@@ -85,7 +85,7 @@ class Board:
                 if random.randint(0, 100) < constants.LAVA_CHANCE:
                     self.cells[i][j].terrain = "lava"
                     self.cells[i][j].color = constants.LAVA_COLOR
-                    self.cells[i][j].draw(self.screen, constants.LAVA_COLOR)
+                    self.cells[i][j].draw(self.screen)
                     self.draw_grid()
 
         self.draw_grid()
@@ -97,9 +97,10 @@ class Board:
                                      (constants.WINDOW_WIDTH // constants.CELL_SIZE) - 1)
         exit_cell_y = random.randint(
             0, constants.WINDOW_HEIGHT // constants.CELL_SIZE - 1)
+        self.exit_x = exit_cell_x * constants.CELL_SIZE
+        self.exit_y = exit_cell_y * constants.CELL_SIZE
         self.cells[exit_cell_x][exit_cell_y].terrain = "exit"
-        self.cells[exit_cell_x][exit_cell_y].draw(
-            self.screen, constants.EXIT_COLOR)
+        self.cells[exit_cell_x][exit_cell_y].draw(self.screen)
         self.draw_grid()
 
     # Creates a bridge between the left most safe zone and the right most safe zone
@@ -114,7 +115,7 @@ class Board:
                            ((constants.WINDOW_WIDTH - constants.SAFE_ZONE_WIDTH) // constants.CELL_SIZE)):
                 self.cells[j][i].terrain = "wood"
                 self.cells[j][i].color = constants.WOOD_COLOR
-                self.cells[j][i].draw(self.screen, constants.WOOD_COLOR)
+                self.cells[j][i].draw(self.screen)
             self.draw_grid()
 
         self.draw_grid()
@@ -130,6 +131,19 @@ class Board:
         cell.agent.append(agent)
         self.empty_spawn_cells.remove(cell)
         agent.draw(self)
+
+    def reset_agents(self):
+
+        self.empty_spawn_cells = self.get_empty_spawn_cells()
+
+        for agent in self.agent_list:
+            cell = random.choice(self.empty_spawn_cells)
+            agent.x = cell.x
+            agent.y = cell.y
+            cell.agent.append(agent)
+            self.empty_spawn_cells.remove(cell)
+            agent.alive = True
+            agent.draw(self)
 
     # This method randomly moves all the agents
 
