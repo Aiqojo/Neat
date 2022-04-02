@@ -189,8 +189,7 @@ class Agent:
     # This method returns a list of all of the adajcent cells terrain
     def get_adjacent_terrain(self):
         # Rock is 0, lava is 1, wood is 2, not exist/wall = 3
-        dir = [(0, 1), (1, 0), (0, -1), (-1, 0),
-               (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        dir = [(0, 1), (1, 0), (0, -1), (-1, 0)]
         adjacent_terrain = []
         for x, y in dir:
             try:

@@ -35,7 +35,7 @@ class Board:
 
         # Initializes other asepcts of the board
         self.get_empty_spawn_cells()
-        self.lava_chance = lava_chance 
+        self.lava_chance = lava_chance
         self.randomize_lava()
         self.create_exit()
         for _ in range(constants.BRIDGE_COUNT):
@@ -93,6 +93,7 @@ class Board:
 
     # Randomly places lava cells
     def randomize_lava(self):
+        #print("Lava chance: " + str(self.lava_chance))
         for i in range(constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE,
                        (constants.WINDOW_WIDTH - constants.SAFE_ZONE_WIDTH) // constants.CELL_SIZE):
             for j in range(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE):
