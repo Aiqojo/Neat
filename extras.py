@@ -49,3 +49,80 @@
     #             # Move down-right
     #             if output[7] > 0.5:
     #                 agent.move(1, -1)
+
+
+
+
+    while board.alive_agents > 0 and max_frames > 0:
+    #     # Check for events
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             pygame.quit()
+    #             quit
+    #             break
+    #     # If the agent is dead, remove it from the board
+    #     agent_index = 0
+    #     for agent in board.agent_list:
+    #         if not agent.alive:
+    #                 ge[agent_index].fitness -= 50
+    #                 nets.pop(board.agent_list.index(agent))
+    #                 ge.pop(board.agent_list.index(agent))
+    #                 board.agent_list.pop(board.agent_list.index(agent))
+    #         agent_index += 1
+                    
+    #     # For each agent, get the output from the network and move the agent
+    #     agent_index = 0
+    #     for agent in ge:
+    #         #print("GE LENGTHL", len(ge))
+    #         agent = board.agent_list[agent_index]
+    #         if agent.alive:
+    #             # If the agent is in the same cell, it loses one fitness
+    #             if agent.previous_x == agent.x and agent.previous_y == agent.y:
+    #                 ge[agent_index].fitness -= 5
+
+    #             ge[agent_index].fitness += 1
+
+    #             adj = agent.get_adjacent_terrain()
+    #             # The input is the
+    #             output = nets[board.agent_list.index(agent)].activate((float(adj[0]), float(adj[1]), float(adj[2]), float(adj[3]), float(adj[4]), float(adj[5]), float(adj[6]),
+    #                                                                    float(adj[7]), float(agent.x), float(agent.y), float(board.exit_x), float(board.exit_y)))
+                
+    #             direction = output.index(max(output))
+                
+    #             if direction == 0:
+    #                 agent.move(-1,-1)
+    #             elif direction == 1:
+    #                 agent.move(0,-1)
+    #             elif direction == 2:
+    #                 agent.move(1,-1)
+    #             elif direction == 3:
+    #                 agent.move(-1,0)
+    #             elif direction == 4:
+    #                 agent.move(1,0)
+    #             elif direction == 5:
+    #                 agent.move(-1,1)
+    #             elif direction == 6:
+    #                 agent.move(0,1)
+    #             elif direction == 7:
+    #                 agent.move(1,1)
+
+    #     pygame.display.flip()
+    #     #time.sleep(.05)
+
+    #     max_frames -= 1
+
+    # agent_index = 0
+    # for agent in ge:
+    #     agent = board.agent_list[agent_index]
+    #     if agent.alive:
+    #         ge[agent_index].fitness += 5
+    #         # Finds distance of agent to exit
+    #     dist = abs(agent.x - board.exit_x) + abs(agent.y - board.exit_y)
+    #     if dist == 0:
+    #         ge[agent_index].fitness += 1000
+    #     else:
+    #         ge[agent_index].fitness += 25*(.25/dist)
+            
+    # # Save the winner
+    # with open('winner.pkl', 'wb') as output:
+    #     pickle.dump(ge[0], output, 1)

@@ -25,6 +25,9 @@ class Agent:
         self.health = 100
         self.strength = random.randint(1, 20)
 
+        # Dictionary that stores the previous cells of the agent as well as how many times it has been in that cell
+        self.previous_cells = {}
+
     def initialize_agent_image(self):
         pygame.sprite.Sprite.__init__(self)
         # Specific agent image
@@ -41,18 +44,41 @@ class Agent:
         self.universal_agent.fill(self.universal_agent_color)
 
     # Draws a cell to fill the agent's previous position and draws the agent's current position
-    def draw(self, board):
+    def draw(self):
         if self.alive:
             # Drawing the previous cell
-            curr_cell = board.cells[self.previous_x //
-                                    constants.CELL_SIZE][self.previous_y // constants.CELL_SIZE]
-            curr_cell.draw(board.screen)
+            prev_cell = self.board.cells[self.previous_x //
+                                         constants.CELL_SIZE][self.previous_y // constants.CELL_SIZE]
+            prev_cell.draw(self.board.screen)
 
             # Creates a border square to help show that this cell is occupied by an agent
-            board.screen.blit(self.universal_agent, (self.x, self.y))
+            self.board.screen.blit(self.universal_agent, (self.x, self.y))
             # Then draws individual agent's color
-            board.screen.blit(self.agent_specific_image,
-                              (self.x + 3, self.y + 3))
+            self.board.screen.blit(self.agent_specific_image,
+                                   (self.x + 3, self.y + 3))
+
+    # Returns the amount of times the agent has been in the cell
+    def get_cell_history(self, cell):
+        if (cell.x // constants.CELL_SIZE, cell.y // constants.CELL_SIZE) in self.previous_cells:
+            print("CELL:", cell.x // constants.CELL_SIZE,
+                  cell.y // constants.CELL_SIZE)
+            print("PREVIOUS CELLS:", self.previous_cells)
+            # Only returns if agent has been in cell more than once, because the value will be one when the agent has moved into the cell for the first time
+            if self.previous_cells.get((cell.x // constants.CELL_SIZE, cell.y // constants.CELL_SIZE)) > 1:
+                return self.previous_cells.get((cell.x // constants.CELL_SIZE, cell.y // constants.CELL_SIZE))
+        else:
+            print("CELL ELSE:", cell.x // constants.CELL_SIZE,
+                  cell.y // constants.CELL_SIZE)
+            print("RETUNRNING 0")
+            return 0
+
+    def update_previous_cells(self):
+        if (self.x // constants.CELL_SIZE, self.y // constants.CELL_SIZE) not in self.previous_cells:
+            self.previous_cells[(self.x // constants.CELL_SIZE,
+                                 self.y // constants.CELL_SIZE)] = 1
+        else:
+            self.previous_cells[(self.x // constants.CELL_SIZE,
+                                 self.y // constants.CELL_SIZE)] += 1
 
     # Moves the agent in the given direction and keeps in bounds
     def move(self, x, y):
@@ -61,10 +87,12 @@ class Agent:
         #print("CELL X AND Y:", self.x // constants.CELL_SIZE, self.y // constants.CELL_SIZE)
         #print("AGENT:", self.board.cells[self.x // constants.CELL_SIZE][self.y // constants.CELL_SIZE].agent)
 
+        # Adds current cell to previous cells
+        self.update_previous_cells()
+
         if self.alive:
             self.board.cells[self.x // constants.CELL_SIZE][self.y //
                                                             constants.CELL_SIZE].agent.remove(self)
-
             # Changing coordinates
             self.previous_x = self.x
             self.previous_y = self.y
@@ -94,15 +122,14 @@ class Agent:
             # Checks if move is valid
             other_cell = self.board.cells[self.x //
                                           constants.CELL_SIZE][self.y // constants.CELL_SIZE]
-
             # Collision checks
             self.check_collision(other_cell)
             # Have to re-enter self.x and self.y because the agent could've been moved to another cell, and not into other_cell
             self.terrain_check(self.board.cells[self.x //
-                                          constants.CELL_SIZE][self.y // constants.CELL_SIZE])
+                                                constants.CELL_SIZE][self.y // constants.CELL_SIZE])
 
             # Draws the agent
-            self.draw(self.board)
+            self.draw()
             self.board.draw_grid()
 
     # Method checks if the agent is in the same cell as another agent
@@ -140,7 +167,8 @@ class Agent:
         curr_cell = self.board.cells[self.x //
                                      constants.CELL_SIZE][self.y // constants.CELL_SIZE]
         # Draws red square to show that the agent is dead
-        # curr_cell.draw(self.board.screen, constants.RED)
+        curr_cell.draw(self.board.screen)
+
         curr_cell.draw(self.board.screen)
         # Removes the agent from the cell
         curr_cell.agent.remove(self)
@@ -150,14 +178,13 @@ class Agent:
                                      constants.CELL_SIZE][self.previous_y // constants.CELL_SIZE]
         prev_cell.draw(self.board.screen)
 
+        if self in prev_cell.agent:
+            prev_cell.agent.remove(self)
+
         self.alive = False
-        self.score = -1000
 
         # Removes from board list
         self.board.alive_agents -= 1
-
-    def is_alive(self):
-        return self.alive
 
     # This method returns a list of all of the adajcent cells terrain
     def get_adjacent_terrain(self):
@@ -180,17 +207,21 @@ class Agent:
                 adj_arr.append(1)
             elif cell == "wood":
                 adj_arr.append(2)
-            else:
+            elif cell == "exit":
                 adj_arr.append(3)
+            else:
+                adj_arr.append(4)
 
         return adj_arr
 
     # Checks if the agent has reached the exit
-    def reached_exit(self, board):
-        if "exit" in board.cells[self.x // constants.CELL_SIZE][self.y // constants.CELL_SIZE].get_terrain():
-            self.die(board)
-            self.change_score(100)
+    def reached_exit(self):
+        if "exit" in self.board.cells[self.x // constants.CELL_SIZE][self.y // constants.CELL_SIZE].get_terrain():
+            self.die()
+            print("Reached exit!")
             return True
+        else:
+            return False
 
     def set_stats(self):
         self.health = 100

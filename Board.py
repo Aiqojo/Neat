@@ -9,45 +9,52 @@ import time
 
 class Board:
 
-    agent_list = []
+    screen = None
+
     alive_agents = 0
+    agent_list = []
+
+    cells = []
+    empty_spawn_cells = []
+    cell_count = 0
 
     def __init__(self):
-
-        # Create 2d array
+        # Create 2d array for cells
         self.cells = np.empty((constants.WINDOW_WIDTH // constants.CELL_SIZE,
                                constants.WINDOW_HEIGHT // constants.CELL_SIZE), dtype=Cell.Cell)
 
         # Create pygame window
         self.screen = pygame.display.set_mode(
             (constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT))
+
         self.create_window()
 
+        # Gets total amount of cells
         self.cell_count = constants.WINDOW_WIDTH // constants.CELL_SIZE * \
             constants.WINDOW_HEIGHT // constants.CELL_SIZE
 
-        self.create_window()
+        # Initializes other asepcts of the board
         self.get_empty_spawn_cells()
-        self.randomize_lava()
-        self.draw_grid()
+        #self.randomize_lava()
         self.create_exit()
-        self.build_bridge()
+        for _ in range(constants.BRIDGE_COUNT):
+            self.build_bridge()
+        self.draw_grid()
 
-    # To run the game
+    ##### RESET METHODS #####
 
-    def run(self):
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        running = False
-                        sys.exit()
-            pygame.display.flip()
+    def reset_board(self):
+        self.create_window()
+        #self.randomize_lava()
+        self.create_exit()
+        for _ in range(constants.BRIDGE_COUNT):
+            self.build_bridge()
+        self.draw_grid()
+        self.get_empty_spawn_cells()
+        self.agent_list = []
 
     # This method creates a pygame window with a grey background
+
     def create_window(self):
         pygame.init()
         pygame.display.set_caption("NeatDungeon")
@@ -92,14 +99,17 @@ class Board:
 
     # Creates one exit within the right most safe zone
     def create_exit(self):
-        exit_cell_x = random.randint(((constants.WINDOW_WIDTH - constants.SAFE_ZONE_WIDTH)
-                                      // constants.CELL_SIZE),
-                                     (constants.WINDOW_WIDTH // constants.CELL_SIZE) - 1)
+        exit_cell_x = random.randint(
+            constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE, constants.WINDOW_HEIGHT // constants.CELL_SIZE - 1)
+        # exit_cell_x = random.randint(((constants.WINDOW_WIDTH - constants.SAFE_ZONE_WIDTH)
+        #                               // constants.CELL_SIZE),
+        #                              (constants.WINDOW_WIDTH // constants.CELL_SIZE) - 1)
         exit_cell_y = random.randint(
             0, constants.WINDOW_HEIGHT // constants.CELL_SIZE - 1)
         self.exit_x = exit_cell_x * constants.CELL_SIZE
         self.exit_y = exit_cell_y * constants.CELL_SIZE
         self.cells[exit_cell_x][exit_cell_y].terrain = "exit"
+        self.cells[exit_cell_x][exit_cell_y].color = constants.EXIT_COLOR
         self.cells[exit_cell_x][exit_cell_y].draw(self.screen)
         self.draw_grid()
 
@@ -130,7 +140,7 @@ class Board:
         agent.y = cell.y
         cell.agent.append(agent)
         self.empty_spawn_cells.remove(cell)
-        agent.draw(self)
+        agent.draw()
 
     def reset_agents(self):
 
@@ -146,11 +156,23 @@ class Board:
             agent.draw(self)
 
     # This method randomly moves all the agents
-
     def randomly_move_agents(self):
         for agent in self.agent_list:
             if agent.alive:
                 agent.random_move()
-                agent.draw(self)
+                agent.draw()
                 # time.sleep(.25)
         self.draw_grid()
+
+    # To run the game
+    def run(self):
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                        sys.exit()
+            pygame.display.flip()
