@@ -18,7 +18,7 @@ class Board:
     empty_spawn_cells = []
     cell_count = 0
 
-    def __init__(self):
+    def __init__(self, lava_chance):
         # Create 2d array for cells
         self.cells = np.empty((constants.WINDOW_WIDTH // constants.CELL_SIZE,
                                constants.WINDOW_HEIGHT // constants.CELL_SIZE), dtype=Cell.Cell)
@@ -35,7 +35,8 @@ class Board:
 
         # Initializes other asepcts of the board
         self.get_empty_spawn_cells()
-        #self.randomize_lava()
+        self.lava_chance = lava_chance 
+        self.randomize_lava()
         self.create_exit()
         for _ in range(constants.BRIDGE_COUNT):
             self.build_bridge()
@@ -45,7 +46,7 @@ class Board:
 
     def reset_board(self):
         self.create_window()
-        #self.randomize_lava()
+        self.randomize_lava()
         self.create_exit()
         for _ in range(constants.BRIDGE_COUNT):
             self.build_bridge()
@@ -78,10 +79,16 @@ class Board:
 
     def get_empty_spawn_cells(self):
         arr = []
-        for x in range(0, constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE):
-            for y in range(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE):
-                if len(self.cells[x][y].agent) == 0:
-                    arr.append(self.cells[x][y])
+        if constants.SAFE_ZONE_AGENT_SPAWN:
+            for x in range(0, constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE):
+                for y in range(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE):
+                    if len(self.cells[x][y].agent) == 0:
+                        arr.append(self.cells[x][y])
+        else:
+            for x in range(0, constants.WINDOW_WIDTH // constants.CELL_SIZE):
+                for y in range(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE):
+                    if len(self.cells[x][y].agent) == 0:
+                        arr.append(self.cells[x][y])
         self.empty_spawn_cells = arr
 
     # Randomly places lava cells
@@ -89,7 +96,8 @@ class Board:
         for i in range(constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE,
                        (constants.WINDOW_WIDTH - constants.SAFE_ZONE_WIDTH) // constants.CELL_SIZE):
             for j in range(0, constants.WINDOW_HEIGHT // constants.CELL_SIZE):
-                if random.randint(0, 100) < constants.LAVA_CHANCE:
+                #if random.randint(0, 100) < constants.LAVA_CHANCE:
+                if random.randint(0, 100) < self.lava_chance:
                     self.cells[i][j].terrain = "lava"
                     self.cells[i][j].color = constants.LAVA_COLOR
                     self.cells[i][j].draw(self.screen)
@@ -99,11 +107,10 @@ class Board:
 
     # Creates one exit within the right most safe zone
     def create_exit(self):
-        exit_cell_x = random.randint(
-            constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE, constants.WINDOW_HEIGHT // constants.CELL_SIZE - 1)
-        # exit_cell_x = random.randint(((constants.WINDOW_WIDTH - constants.SAFE_ZONE_WIDTH)
-        #                               // constants.CELL_SIZE),
-        #                              (constants.WINDOW_WIDTH // constants.CELL_SIZE) - 1)
+        # exit_cell_x = random.randint(
+        #     constants.SAFE_ZONE_WIDTH // constants.CELL_SIZE, constants.WINDOW_HEIGHT // constants.CELL_SIZE - 1)
+        exit_cell_x = random.randint(((constants.WINDOW_WIDTH - constants.SAFE_ZONE_WIDTH) // constants.CELL_SIZE),
+                                     (constants.WINDOW_WIDTH // constants.CELL_SIZE) - 1)
         exit_cell_y = random.randint(
             0, constants.WINDOW_HEIGHT // constants.CELL_SIZE - 1)
         self.exit_x = exit_cell_x * constants.CELL_SIZE
@@ -133,8 +140,10 @@ class Board:
     def add_agent(self, agent):
         self.agent_list.append(agent)
         self.alive_agents += 1
-
-        cell = random.choice(self.empty_spawn_cells)
+        if constants.SAFE_ZONE_AGENT_SPAWN:
+            cell = random.choice(self.empty_spawn_cells)
+        else:
+            cell = random.choice(self.empty_spawn_cells)
 
         agent.x = cell.x
         agent.y = cell.y

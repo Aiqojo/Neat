@@ -1,9 +1,7 @@
 import Board
 import pygame
-import time
 import constants
 import Agent
-import random
 import os
 import neat
 import pickle
@@ -13,24 +11,21 @@ import math
 # ALSO END WHEN 1 REACHES EXIT
 # ALSO MAKE THE GET TERRAIN FUNCTION RETURN 4 FOR IF THERE IS AN AGENT IN THAT SQUARE
 # MAKE PREVIOUS CELL BE ITS ACTUAL PROPER COLOR
-board = Board.Board()
+global lava_num
+lava_num = 0
+global lava_chance
+lava_chance = constants.LAVA_CHANCE
+board = Board.Board(lava_chance)
 
 
 def main(genomes, config):
+    global lava_num
+    lava_num += 1
+    global lava_chance
+    lava_chance = (15/(1+math.exp(-.0012*(lava_num-6000))))/2
+    print("LAVA CHANCE", lava_chance)
+    board.lava_chance = lava_chance
     pygame.init()
-
-    # board = Board.Board()
-    # for i in range(20):
-    #     agent = Agent.Agent(board, i)
-    #     board.add_agent(agent)
-
-    # # Randomly move agent around
-    # while board.alive_agents > 0:
-    #     pygame.display.flip()
-    #     #time.sleep(.05)
-    #     board.randomly_move_agents()
-    #     pygame.display.flip()
-    #     time.sleep(.1)
 
     nets = []
     ge = []
@@ -48,21 +43,10 @@ def main(genomes, config):
         nets.append(net)
         ge.append(genome)
 
-    # Reset agent positions
-    #board.reset_agents()
-
-    # #Randomly move agent around
-    # while board.alive_agents > 0:
-    #     pygame.display.flip()
-    #     time.sleep(.05)
-    #     board.randomly_move_agents()
-    #     pygame.display.flip()
-    #     #time.sleep(.1)
-
     # Run the game
-    max_frames = 100
-    pygame.display.flip()
-    time.sleep(.2)
+    max_frames = 200
+    #pygame.display.flip()
+    #time.sleep(.1)
 
     while board.alive_agents > 0 and max_frames > 0:
         # Check for events
@@ -75,54 +59,57 @@ def main(genomes, config):
         agent_index = 0
         for agent in ge:
             agent = board.agent_list[agent_index]
-            # If the agent is in a cell it has been in previously, subtract fitness equal to the amount of time it has been in that cell
-            #ge[agent_index].fitness -= agent.get_cell_history(board.cells[agent.x // constants.CELL_SIZE][agent.y // constants.CELL_SIZE])
-            # Add 5 to fitness to give the agent a little incentive for staying alive
+
             ge[agent_index].fitness += 1
             # Get adjacent cells
             adj = agent.get_adjacent_terrain()
             # Get the output from the network
-            output = nets[board.agent_list.index(agent)].activate((float(adj[0]), float(adj[1]), float(adj[2]), float(adj[3]), float(adj[4]), float(adj[5]), float(adj[6]),
-                                                                   float(adj[7]), float(agent.x), float(agent.y), float(board.exit_x), float(board.exit_y)))
+
+            displacement_x = board.exit_x - agent.x
+            displacement_y = board.exit_y - agent.y
+
+            output = nets[board.agent_list.index(agent)].activate((float(adj[0]), float(adj[1]), float(adj[2]),
+                                                                   float(adj[3]), float(
+                                                                       displacement_x),
+                                                                   float(displacement_y)))
 
             # Move the agent
             direction = output.index(max(output))
             if direction == 0:
-                agent.move(-1, -1)
-            elif direction == 1:
-                agent.move(0, -1)
-            elif direction == 2:
-                agent.move(1, -1)
-            elif direction == 3:
                 agent.move(-1, 0)
-            elif direction == 4:
+            elif direction == 1:
                 agent.move(1, 0)
-            elif direction == 5:
-                agent.move(-1, 1)
-            elif direction == 6:
+            elif direction == 2:
+                agent.move(0, -1)
+            elif direction == 3:
                 agent.move(0, 1)
-            elif direction == 7:
-                agent.move(1, 1)
 
             # Check if agent is dead
             if not agent.alive:
-                ge[agent_index].fitness -= 100
+                # Fitness stuff
+                ge[agent_index].fitness -= 250
+                distance = (abs(agent.x - board.exit_x)) + \
+                    abs(agent.y - board.exit_y)
+                # Use .75 as exponent to make fitness gain from distance weaker here because the agent died
+                ge[agent_index].fitness += 750*(1 / distance**.75)
                 board.alive_agents -= 1
                 board.agent_list.remove(agent)
                 nets.pop(agent_index)
                 ge.pop(agent_index)
+                agent_index -= 1
+            elif agent.reached_exit():
+                ge[agent_index].fitness += 1000
+                board.alive_agents -= 1
+                board.agent_list.remove(agent)
+                nets.pop(agent_index)
+                ge.pop(agent_index)
+                agent_index -= 1
             else:
-                if agent.reached_exit():
-                    ge[agent_index].fitness += 2500
-                    board.alive_agents -= 1
-                    board.agent_list.remove(agent)
-                    nets.pop(agent_index)
-                    ge.pop(agent_index)
                 agent_index += 1
 
         # Update the board
         pygame.display.flip()
-        #time.sleep(.001)
+        #time.sleep(.005)
         max_frames -= 1
         #print("AGENTS ALIVE: " + str(board.alive_agents))
 
@@ -130,10 +117,13 @@ def main(genomes, config):
     agent_index = 0
     for agent in ge:
         agent = board.agent_list[agent_index]
-        distance = max(abs(agent.x - board.exit_x),
-                       abs(agent.y - board.exit_y))
-        ge[agent_index].fitness += 1000*(1 / distance)
-        agent_index += 1
+        if agent.x <= constants.SAFE_ZONE_WIDTH:
+            ge[agent_index].fitness += -500
+        else:
+            distance = (abs(agent.x - board.exit_x)) + \
+                abs(agent.y - board.exit_y)
+            ge[agent_index].fitness += 750*(1 / distance**.5)
+            agent_index += 1
 
     #Save the winner
     with open('winner.pkl', 'wb') as output:
@@ -151,8 +141,7 @@ def run(config_path):
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-
-    winner = p.run(main, 500)
+    winner = p.run(main, 100000)
 
 
 if __name__ == '__main__':

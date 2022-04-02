@@ -123,7 +123,7 @@ class Agent:
             other_cell = self.board.cells[self.x //
                                           constants.CELL_SIZE][self.y // constants.CELL_SIZE]
             # Collision checks
-            self.check_collision(other_cell)
+            #self.check_collision(other_cell)
             # Have to re-enter self.x and self.y because the agent could've been moved to another cell, and not into other_cell
             self.terrain_check(self.board.cells[self.x //
                                                 constants.CELL_SIZE][self.y // constants.CELL_SIZE])
@@ -201,24 +201,20 @@ class Agent:
 
         adj_arr = []
         for cell in adjacent_terrain:
-            if cell == "rock":
+            if cell == "rock" or "wood":
                 adj_arr.append(0)
             elif cell == "lava":
                 adj_arr.append(1)
-            elif cell == "wood":
-                adj_arr.append(2)
-            elif cell == "exit":
-                adj_arr.append(3)
             else:
-                adj_arr.append(4)
-
+                adj_arr.append(2)
+            
         return adj_arr
 
     # Checks if the agent has reached the exit
     def reached_exit(self):
         if "exit" in self.board.cells[self.x // constants.CELL_SIZE][self.y // constants.CELL_SIZE].get_terrain():
             self.die()
-            print("Reached exit!")
+            #print("Reached exit!")
             return True
         else:
             return False
