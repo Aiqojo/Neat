@@ -38,4 +38,3 @@ An extra bonus is given if the agent reaches the exit, which is reduced based on
 ## Other
 This project is still somewhat messy but I am working on making this easy to set up and run.
 There are comments throughout that explains most though.
-
