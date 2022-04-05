@@ -52,7 +52,6 @@
 
 
 
-
     #while board.alive_agents > 0 and max_frames > 0:
     #     # Check for events
     #     for event in pygame.event.get():
