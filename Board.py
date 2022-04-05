@@ -4,7 +4,6 @@ import sys
 import Cell
 import constants
 import numpy as np
-import time
 
 
 class Board:

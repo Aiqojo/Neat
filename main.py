@@ -10,18 +10,21 @@ import math
 
 global gen_num
 # If restarting from checkpoint, put generation number here
-gen_num = 1300
+gen_num = 0
 global lava_chance
 lava_chance = constants.LAVA_CHANCE
 board = Board.Board(lava_chance)
-max_frames = 1.5 * (constants.WINDOW_WIDTH // constants.CELL_SIZE * \
+max_frames = 1.5 * (constants.WINDOW_WIDTH // constants.CELL_SIZE *
                     constants.WINDOW_HEIGHT // constants.CELL_SIZE)
 
+
 def main(genomes, config):
+    # Having lava chance slowly increase via 2 s-curves
     global gen_num
-    gen_num += 1
     global lava_chance
-    lava_chance = (5/(1+math.exp(-.003*(gen_num-750)))) + (10/(1+math.exp(-.0025*(gen_num-4000))))
+    gen_num += 1
+    lava_chance = (5/(1+math.exp(-.003*(gen_num-750)))) + \
+        (10/(1+math.exp(-.0025*(gen_num-4000))))
     # Formats the lava chance into a percentage with 2 decimal places
     print("LAVA CHANCE:", str(round(lava_chance, 4)) + "%")
     board.lava_chance = lava_chance
@@ -29,8 +32,8 @@ def main(genomes, config):
     # Agents will have to dodge lava more, meaning more frames are needed to finish
     max_frames = math.floor(150 + 4 * lava_chance)
 
+    # Initialize pygame and neat arrays
     pygame.init()
-
     nets = []
     ge = []
 
@@ -47,7 +50,6 @@ def main(genomes, config):
         nets.append(net)
         ge.append(genome)
 
-    
     # Holds int for how many agents have reached the exit
     reached_exit = 0
     died = 0
@@ -61,7 +63,7 @@ def main(genomes, config):
 
         # For each agent, get the output from the network and move it
         agent_index = 0
-        for a in ge:
+        for _ in ge:
             agent = board.agent_list[agent_index]
 
             # Get fitness for staying alive
@@ -73,13 +75,17 @@ def main(genomes, config):
 
             displacement_x = board.exit_x - agent.x
             displacement_y = board.exit_y - agent.y
-            
+
             # 0 - up, 1 - right, 2 - down, 3 - left
-            output = nets[board.agent_list.index(agent)].activate((float(adj[0]), 
-                                                                   float(adj[1]),
-                                                                   float(adj[2]),
-                                                                   float(adj[3]), 
-                                                                   float(displacement_x),
+            output = nets[board.agent_list.index(agent)].activate((float(adj[0]),
+                                                                   float(
+                                                                       adj[1]),
+                                                                   float(
+                                                                       adj[2]),
+                                                                   float(
+                                                                       adj[3]),
+                                                                   float(
+                                                                       displacement_x),
                                                                    float(displacement_y)))
 
             # Move the agent
@@ -156,8 +162,8 @@ def run(config_path):
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation,
                                 config_path)
-    p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-1299')
-    #p = neat.Population(config)
+    #p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-1299')
+    p = neat.Population(config)
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)

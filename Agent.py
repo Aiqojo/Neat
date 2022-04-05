@@ -1,7 +1,6 @@
 import pygame
 import constants
 import random
-import time
 
 
 class Agent:
@@ -206,7 +205,7 @@ class Agent:
                 adj_arr.append(1)
             else:
                 adj_arr.append(2)
-            
+
         return adj_arr
 
     # Checks if the agent has reached the exit

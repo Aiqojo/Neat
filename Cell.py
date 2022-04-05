@@ -1,6 +1,5 @@
 import pygame
 import constants
-import random
 
 
 class Cell:
@@ -16,7 +15,8 @@ class Cell:
         self.item = []
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, (self.x, self.y, self.size, self.size))
+        pygame.draw.rect(screen, self.color,
+                         (self.x, self.y, self.size, self.size))
 
     def get_terrain(self):
         return self.terrain
