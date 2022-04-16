@@ -1,5 +1,7 @@
 # NeatDungeon
 
+![Gif](https://imgur.com/a/1N4VBQi)
+
 ## Brief overview
 This creates a set amount of agents that can move up, down, left, and right.
 During the first generation, their genetic structures are randomized, meaning they move mostly randomly.
