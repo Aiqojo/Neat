@@ -5,7 +5,7 @@
 ## Brief overview
 This creates a set amount of agents that can move up, down, left, and right.
 During the first generation, their genetic structures are randomized, meaning they move mostly randomly.
-Each generation lasts 150 frames, in other words, each generation allows each agent to make a total of 150 moves.
+Each generation lasts a certain amount if frames (Right now it is 150) frames, in other words, each generation allows each agent to make a total of 150 moves.
 At the end of each generation, dependent on the distance away from the exit, a reward function is called and the result is added to the fitness of the specific agent.
 
 Agents with similar gentic structures belong to the same "species".
