@@ -1,6 +1,6 @@
 # NeatDungeon
 
-![Gif](https://i.imgur.com/jz8MtYp.mp4)
+![Gif](https://imgur.com/poOU8Q4)
 
 ## Brief overview
 This creates a set amount of agents that can move up, down, left, and right.
