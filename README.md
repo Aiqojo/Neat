@@ -10,6 +10,7 @@ At the end of each generation, dependent on the distance away from the exit, a r
 
 Agents with similar gentic structures belong to the same "species".
 Each species at the end of a generation has the fitnesses of their agents averaged.
+Fitness is the total reward the agent has recieved depending on how close it got to the exit as well as how quick it got to the exit.
 The species with higher fitnesses can reproduce more, and create more agents that are similar to them.
 These species now have a chance to mutate either a new connection or node somewhere in between the input layer, the 1 hidden layer, or the end layer.
 These new agents hopefully perform better than the previous ones, and continue to reproduce, creating new species with higher average fitnesses.
