@@ -30,7 +30,7 @@ There are 4 outputs. Each is an number value for how much the agent wants to mov
 The board is filled with default "rock" cells that are safe for the agent to walk on. Lava is then placed randomly based on a percent, excluding 2 safe zones on each side.
 Bridges can also be enabled to be placed to give the agents a safe path to walk across the lava in.
 
-Note: As of right now the lava is static because I was testing something.
+Lava starts at a lower volume and increases based on a logistic growth function to slowly lava to the agents so they can learn to deal with it.
 
 
 ## Reward
