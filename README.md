@@ -1,13 +1,16 @@
 # NeatDungeon
 
+![Gif](https://imgur.com/poOU8Q4.gif)
+
 ## Brief overview
 This creates a set amount of agents that can move up, down, left, and right.
 During the first generation, their genetic structures are randomized, meaning they move mostly randomly.
-Each generation lasts 150 frames, in other words, each generation allows each agent to make a total of 150 moves.
+Each generation lasts a certain amount if frames (Right now it is 150) frames, in other words, each generation allows each agent to make a total of 150 moves.
 At the end of each generation, dependent on the distance away from the exit, a reward function is called and the result is added to the fitness of the specific agent.
 
 Agents with similar gentic structures belong to the same "species".
 Each species at the end of a generation has the fitnesses of their agents averaged.
+Fitness is the total reward the agent has recieved depending on how close it got to the exit as well as how quick it got to the exit.
 The species with higher fitnesses can reproduce more, and create more agents that are similar to them.
 These species now have a chance to mutate either a new connection or node somewhere in between the input layer, the 1 hidden layer, or the end layer.
 These new agents hopefully perform better than the previous ones, and continue to reproduce, creating new species with higher average fitnesses.
@@ -27,7 +30,7 @@ There are 4 outputs. Each is an number value for how much the agent wants to mov
 The board is filled with default "rock" cells that are safe for the agent to walk on. Lava is then placed randomly based on a percent, excluding 2 safe zones on each side.
 Bridges can also be enabled to be placed to give the agents a safe path to walk across the lava in.
 
-Note: As of right now the lava is static because I was testing something.
+Lava starts at a lower volume and increases based on a logistic growth function to slowly lava to the agents so they can learn to deal with it.
 
 
 ## Reward
