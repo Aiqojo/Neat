@@ -23,14 +23,14 @@ def main(genomes, config):
     global gen_num
     global lava_chance
     gen_num += 1
-    lava_chance = (5/(1+math.exp(-.003*(gen_num-750)))) + \
-        (10/(1+math.exp(-.0025*(gen_num-4000))))
+    lava_chance = (5/(1+math.exp(-.003*(gen_num-250)))) + \
+        (5/(1+math.exp(-.0025*(gen_num-2000))))
     # Formats the lava chance into a percentage with 2 decimal places
     print("LAVA CHANCE:", str(round(lava_chance, 4)) + "%")
     board.lava_chance = lava_chance
     # Increases total frames by the percentage of the board that is lava
     # Agents will have to dodge lava more, meaning more frames are needed to finish
-    max_frames = math.floor(150 + 4 * lava_chance)
+    max_frames = math.floor(175 + 4 * lava_chance)
 
     # Initialize pygame and neat arrays
     pygame.init()
@@ -76,7 +76,7 @@ def main(genomes, config):
             displacement_x = board.exit_x - agent.x
             displacement_y = board.exit_y - agent.y
 
-            # 0 - up, 1 - right, 2 - down, 3 - left
+            #0 - up, 1 - right, 2 - down, 3 - left
             output = nets[board.agent_list.index(agent)].activate((float(adj[0]),
                                                                    float(
                                                                        adj[1]),
@@ -87,6 +87,9 @@ def main(genomes, config):
                                                                    float(
                                                                        displacement_x),
                                                                    float(displacement_y)))
+
+            #output = nets[board.agent_list.index(agent)].activate((float(displacement_x), float(displacement_y)))
+
 
             # Move the agent
             direction = output.index(max(output))
@@ -162,7 +165,7 @@ def run(config_path):
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation,
                                 config_path)
-    #p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-1299')
+    #p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-1176')
     p = neat.Population(config)
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()

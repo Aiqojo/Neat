@@ -44,16 +44,19 @@ class Agent:
 
     # Draws a cell to fill the agent's previous position and draws the agent's current position
     def draw(self):
-        if self.alive:
-            # Drawing the previous cell
-            prev_cell = self.board.cells[self.previous_x //
-                                         constants.CELL_SIZE][self.previous_y // constants.CELL_SIZE]
-            prev_cell.draw(self.board.screen)
+        if self.previous_x == self.x and self.previous_y == self.y:
+            return
+        else:
+            if self.alive:
+                # Drawing the previous cell
+                prev_cell = self.board.cells[self.previous_x //
+                                            constants.CELL_SIZE][self.previous_y // constants.CELL_SIZE]
+                prev_cell.draw(self.board.screen)
 
-            # Creates a border square to help show that this cell is occupied by an agent
-            self.board.screen.blit(self.universal_agent, (self.x, self.y))
-            # Then draws individual agent's color
-            self.board.screen.blit(self.agent_specific_image,
+                # Creates a border square to help show that this cell is occupied by an agent
+                self.board.screen.blit(self.universal_agent, (self.x, self.y))
+                # Then draws individual agent's color
+                self.board.screen.blit(self.agent_specific_image,
                                    (self.x + 3, self.y + 3))
 
     # Returns the amount of times the agent has been in the cell
@@ -229,3 +232,4 @@ class Agent:
 
     def random_move(self):
         self.move(random.randint(-1, 1), random.randint(-1, 1))
+

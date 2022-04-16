@@ -76,6 +76,7 @@ class Board:
             pygame.draw.line(self.screen, constants.BLACK,
                              (0, y), (constants.WINDOW_WIDTH, y))
 
+    # Finds the cells that are empty and can be used to spawn agents
     def get_empty_spawn_cells(self):
         arr = []
         if constants.SAFE_ZONE_AGENT_SPAWN:
@@ -140,15 +141,14 @@ class Board:
     def add_agent(self, agent):
         self.agent_list.append(agent)
         self.alive_agents += 1
-        if constants.SAFE_ZONE_AGENT_SPAWN:
-            cell = random.choice(self.empty_spawn_cells)
-        else:
-            cell = random.choice(self.empty_spawn_cells)
+
+        #print(len(self.empty_spawn_cells))
+        cell = random.choice(self.empty_spawn_cells)
 
         agent.x = cell.x
         agent.y = cell.y
         cell.agent.append(agent)
-        self.empty_spawn_cells.remove(cell)
+        #self.empty_spawn_cells.remove(cell)
         agent.draw()
 
     def reset_agents(self):
